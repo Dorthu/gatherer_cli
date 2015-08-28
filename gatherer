@@ -37,6 +37,21 @@ my %mapping = (
 			'l' => '"Legacy"',
 			'v' => '"Vintage"'
 		}
+	},
+	'-t' => {
+		'name' => 'type',
+		'desc' => '[c]reature, [a]rtifact, [s]orcery, [i]nstant, [e]nchantment, [p]laneswalker, [l]and',
+		'split' => '',
+		'join' => '|',
+		'expand' => {
+			'c' => '"Creatrue"',
+			'a' => '"Artifact"',
+			's' => '"Sorcery"',
+			'i' => '"Instant"',
+			'e' => '"Enchantment"',
+			'p' => '"Planeswalker"',
+			'l' => '"Land"'
+		}
 	}
 );
 
