@@ -24,6 +24,19 @@ my %mapping = (
 		'desc'=> 'text contained in rules',
 		'split' => ' ',
 		'join' => '+'
+	},
+	'-f' => {
+		'name' => 'format',
+		'desc' => '[s]tandard, [m]odern, [l]egacy, [v]intage, [c]ommander',
+		'split' => '',
+		'join' => '|',
+		'expand' => {
+			'c' => '"Commander"',
+			's' => '"Standard"',
+			'm' => '"Modern"',
+			'l' => '"Legacy"',
+			'v' => '"Vintage"'
+		}
 	}
 );
 
@@ -50,9 +63,12 @@ sub make_url_param
 
 	return unless $mapping{$type};
 	my $ret = "&$mapping{$type}->{name}=";
-	
+
 	if(defined $mapping{$type}->{split}) {
-		$ret .= "$mapping{$type}->{join}\[$_]" foreach split /$mapping{$type}->{split}/, $arg;
+		foreach(split /$mapping{$type}->{split}/, $arg) {
+			s/$_/$mapping{$type}->{expand}->{lc $_}/ if defined $mapping{$type}->{expand};
+			$ret .= "$mapping{$type}->{join}\[$_]";
+		}
 	}
 	else {
 		$ret .= "+[$arg]";
