@@ -1,0 +1,82 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Data::Dumper;
+
+#some setup
+my %mapping = ( 
+	'-n' => {
+		'name'=> 'name',
+		'desc'=> 'text contained in the name',
+		'split' => ' ',
+		'join' => '+'
+	},
+	'-c' => {
+		'name'=> 'color',
+		'desc'=> 'color of the card',
+		'split' => '',
+		'join' => '|'
+	},
+	'-r' => {
+		'name'=> 'text',
+		'desc'=> 'text contained in rules',
+		'split' => ' ',
+		'join' => '+'
+	}
+);
+
+help() and exit(0) unless @ARGV;
+
+my %params = @ARGV;
+
+#TODO: on other platforms, this will be different
+my $command = 'sensible-browser';
+
+die "Invalid arguments" if grep { $_ !~ /^-/ } keys %params;
+
+my $base_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced';
+
+$base_url .= make_url_param($_, $params{$_}) foreach keys %params;
+
+system $command, $base_url;
+print "$base_url\n";
+
+#functions and stuff
+sub make_url_param
+{
+	my ($type, $arg) = @_;
+
+	return unless $mapping{$type};
+	my $ret = "&$mapping{$type}->{name}=";
+	
+	if(defined $mapping{$type}->{split}) {
+		$ret .= "$mapping{$type}->{join}\[$_]" foreach split /$mapping{$type}->{split}/, $arg;
+	}
+	else {
+		$ret .= "+[$arg]";
+	}
+
+	return $ret;
+}
+
+sub help
+{
+	print "gatherer - command line interface to the online mtg card db\n\n";
+	print "use:\n\tgatherer -n 'llanowar elves'\n\n";
+	print "options:\n";
+	print "\t$_\t$mapping{$_}->{'desc'}\n" foreach keys %mapping;
+	print "\n";
+	print "modifiers:\n";
+	print "\t!\tnegate\n";
+	print "\t+x\tless than\n";
+	print "\tx+\tgreate than\n";
+	print "\n";
+	print "examples:\n";
+	print "\tgatherer -n llanowar -c GR\t find all cards whose name contains 'llanowar' and are green or red\n";
+	print "\tgatherer -c !U -r counter\t find all cards that are not blue and whose rules contain the word 'counter'\n";
+	print "\n";
+	print "this is where I'll leave a github link\n";
+}
+
