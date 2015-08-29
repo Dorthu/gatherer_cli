@@ -26,8 +26,7 @@ I'll turn this into a script later
 
 ## reqs
 
-perl 5.something, and as of this instant `sensible-browser`, although we're going
-to make that not a requirement in the near future
+perl 5.something, not windows
 
 ## disclaimer
 I am not associate to Wizards of the Coast or anyone.  I just like magic

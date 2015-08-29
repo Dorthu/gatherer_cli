@@ -55,12 +55,13 @@ my %mapping = (
 	}
 );
 
+my ($command) = grep { `which $_`  } ('sensible-browser', 'open');
+unsupported() and exit(1) unless $command;
+
+#begin
 help() and exit(0) unless @ARGV;
 
 my %params = @ARGV;
-
-#TODO: on other platforms, this will be different
-my $command = 'sensible-browser';
 
 die "Invalid arguments" if grep { $_ !~ /^-/ } keys %params;
 
@@ -111,3 +112,11 @@ sub help
 	print "this is where I'll leave a github link\n";
 }
 
+sub unsupported
+{
+	print "it looks like we don't support your platform..sorry about that\n\n";
+	print "if you want to add support, please submit a PR to this project at:\n";
+	print "\thttps://githib.com/Dorthu/gatherer_cli\n\n";
+	print "it should be as easy as editing the list of posisble commands to\n";
+	print "open a browser with (up at the top of gatherer - it's all perl!)\n";
+}
