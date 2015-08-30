@@ -40,7 +40,8 @@ my %mapping = (
 	},
 	'-t' => {
 		'name' => 'type',
-		'desc' => '[c]reature, [a]rtifact, [s]orcery, [i]nstant, [e]nchantment, [p]laneswalker, [l]and',
+		'desc' => "[c]reature, [a]rtifact, [s]orcery, [i]nstant, \n" .
+				"\t\t[e]nchantment, [p]laneswalker, [l]and",
 		'split' => '',
 		'join' => '|',
 		'expand' => {
@@ -52,6 +53,12 @@ my %mapping = (
 			'p' => '"Planeswalker"',
 			'l' => '"Land"'
 		}
+	},
+	'-cmc' => {
+		'name' => 'cmc',
+		'desc' => 'converted mana cost',
+		'numeric' => 1,
+		'comparison' => '='
 	}
 );
 
@@ -86,6 +93,11 @@ sub make_url_param
 			$ret .= "$mapping{$type}->{join}\[$_]";
 		}
 	}
+	elsif(defined $mapping{$type}->{numeric}) {
+		my $oper = $arg =~ s/^([=<>])// ? $1 : $mapping{$type}->{comparison};
+		die "$type should be numeric!" unless $arg =~ /^\d+$/;
+		$ret .= "|$oper\[$arg]";
+	}
 	else {
 		$ret .= "+[$arg]";
 	}
@@ -102,12 +114,14 @@ sub help
 	print "\n";
 	print "modifiers:\n";
 	print "\t!\tnegate\n";
-	print "\t+x\tless than\n";
-	print "\tx+\tgreate than\n";
+	print "\t<x\tless than\n";
+	print "\t>x\tgreate than\n";
 	print "\n";
 	print "examples:\n";
-	print "\tgatherer -n llanowar -c GR\t find all cards whose name contains 'llanowar' and are green or red\n";
-	print "\tgatherer -c !U -r counter\t find all cards that are not blue and whose rules contain the word 'counter'\n";
+	print "\tgatherer -n llanowar -c GR\t find all cards whose name contains \n";
+	print "\t\t'llanowar' and are green or red\n";
+	print "\tgatherer -c !U -r counter\t find all cards that are not blue \n";
+	print "\t\tand whose rules contain the word 'counter'\n";
 	print "\n";
 	print "this is where I'll leave a github link\n";
 }
