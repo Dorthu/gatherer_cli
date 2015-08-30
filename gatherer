@@ -59,6 +59,24 @@ my %mapping = (
 		'desc' => 'converted mana cost',
 		'numeric' => 1,
 		'comparison' => '='
+	},
+	'-pow' => {
+		'name' => 'power',
+		'desc' => 'a creature\'s power',
+		'numeric' => 1,
+		'comparison' => '='
+	},
+	'-tough' => {
+		'name' => 'tough',
+		'desc' => 'a creature\'s toughness',
+		'numeric' => 1,
+		'comparison' => '='
+	},
+	'-st' => {
+		'name' => 'subtype',
+		'desc' => 'subtype (i.e. Eye, Elf, Eldrazi)',
+		'split' => ' ',
+		'join' => '|'
 	}
 );
 
@@ -96,7 +114,7 @@ sub make_url_param
 	elsif(defined $mapping{$type}->{numeric}) {
 		my $oper = $arg =~ s/^([=<>])// ? $1 : $mapping{$type}->{comparison};
 		die "$type should be numeric!" unless $arg =~ /^\d+$/;
-		$ret .= "|$oper\[$arg]";
+		$ret .= "+$oper\[$arg]";
 	}
 	else {
 		$ret .= "+[$arg]";
