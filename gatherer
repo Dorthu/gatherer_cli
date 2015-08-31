@@ -77,6 +77,12 @@ my %mapping = (
 		'desc' => 'subtype (i.e. eye, elf, eldrazi)',
 		'split' => ' ',
 		'join' => '|'
+	},
+	'-rare' => {
+		'name' => 'rarity',
+		'desc' => '[r]are, [u]ncommon, [c]ommon, [m]ythic rare',
+		'split' => '',
+		'join' => '|'
 	}
 );
 
