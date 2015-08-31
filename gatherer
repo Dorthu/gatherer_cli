@@ -74,7 +74,7 @@ my %mapping = (
 	},
 	'-st' => {
 		'name' => 'subtype',
-		'desc' => 'subtype (i.e. Eye, Elf, Eldrazi)',
+		'desc' => 'subtype (i.e. eye, elf, eldrazi)',
 		'split' => ' ',
 		'join' => '|'
 	}
@@ -131,17 +131,18 @@ sub help
 	print "\t$_\t$mapping{$_}->{'desc'}\n" foreach keys %mapping;
 	print "\n";
 	print "modifiers:\n";
-	print "\t!\tnegate\n";
-	print "\t<x\tless than\n";
-	print "\t>x\tgreate than\n";
+	print "\t'!'\tnegate\n";
+	print "\t'<x'\tless than\n";
+	print "\t'>x'\tgreater than\n";
 	print "\n";
 	print "examples:\n";
 	print "\tgatherer -n llanowar -c GR\t find all cards whose name contains \n";
-	print "\t\t'llanowar' and are green or red\n";
+	print "\t\t'llanowar' and are green or red\n\n";
 	print "\tgatherer -c !U -r counter\t find all cards that are not blue \n";
 	print "\t\tand whose rules contain the word 'counter'\n";
 	print "\n";
-	print "this is where I'll leave a github link\n";
+	print "like it/hate it/want to contribute?  look no further than:\n";
+	print "\thttps://github.com/Dorthu/gatherer_cli\n";
 }
 
 sub unsupported
