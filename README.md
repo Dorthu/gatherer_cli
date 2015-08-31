@@ -29,6 +29,6 @@ I'll turn this into a script later
 perl 5.something, not windows
 
 ## disclaimer
-I am not associate to Wizards of the Coast or anyone.  I just like magic
+I am not associated with Wizards of the Coast or anyone.  I just like magic
 and look up cards a lot.  From my terminal.
 
