@@ -110,11 +110,12 @@ sub make_url_param
 
 	return unless $mapping{$type};
 	my $ret = "&$mapping{$type}->{name}=";
+	my $join = $arg =~ s/^([+|!])// ? $1 =~ s/!/+!/r : $mapping{$type}->{join};
 
 	if(defined $mapping{$type}->{split}) {
 		foreach(split /$mapping{$type}->{split}/, $arg) {
 			s/$_/$mapping{$type}->{expand}->{lc $_}/ if defined $mapping{$type}->{expand};
-			$ret .= "$mapping{$type}->{join}\[$_]";
+			$ret .= "$join\[$_]";
 		}
 	}
 	elsif(defined $mapping{$type}->{numeric}) {
@@ -138,6 +139,8 @@ sub help
 	print "\n";
 	print "modifiers:\n";
 	print "\t'!'\tnegate\n";
+	print "\t'+'\tand operator\n";
+	print "\t'|'\tor operator\n";
 	print "\t'<x'\tless than\n";
 	print "\t'>x'\tgreater than\n";
 	print "\n";
@@ -145,7 +148,11 @@ sub help
 	print "\tgatherer -n llanowar -c GR\t find all cards whose name contains \n";
 	print "\t\t'llanowar' and are green or red\n\n";
 	print "\tgatherer -c !U -r counter\t find all cards that are not blue \n";
-	print "\t\tand whose rules contain the word 'counter'\n";
+	print "\t\tand whose rules contain the word 'counter'\n\n";
+	print "\tgatherer -c '+GR' -pow '>5'\tfind all creatures that are green\n";
+	print "\t\tand red and whose power is greater than 5\n\n";
+	print "\tgatherer -c '!GBW' -r scry -t '!l'\tfind all nonland cards whose\n";
+	print "\t\trules contain 'scry' and who are not green, white or black\n";
 	print "\n";
 	print "like it/hate it/want to contribute?  look no further than:\n";
 	print "\thttps://github.com/Dorthu/gatherer_cli\n";

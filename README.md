@@ -4,7 +4,8 @@ command line interface to the online mtg database
 ## use
 `gatherer -n 'llanowar elves'` - look up llanowar elves
 
-`gatherer -c RU -r scry` - find all red and blue cards with scry
+`gatherer -c '!GBW' -r scry -t '!l'` - find all red, blue, or colorless non-land
+	cards that scry
 
 ## parameters
 
