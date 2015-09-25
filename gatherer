@@ -41,7 +41,8 @@ my %mapping = (
 	'-t' => {
 		'name' => 'type',
 		'desc' => "[c]reature, [a]rtifact, [s]orcery, [i]nstant, \n" .
-				"\t\t[e]nchantment, [p]laneswalker, [l]and",
+				"\t\t[e]nchantment, [p]laneswalker, [l]and," .
+				"\t\tle[g]end",
 		'split' => '',
 		'join' => '|',
 		'expand' => {
@@ -51,7 +52,8 @@ my %mapping = (
 			'i' => '"Instant"',
 			'e' => '"Enchantment"',
 			'p' => '"Planeswalker"',
-			'l' => '"Land"'
+			'l' => '"Land"',
+			'g' => '"Legendary"'
 		}
 	},
 	'-cmc' => {
