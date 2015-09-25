@@ -41,12 +41,12 @@ my %mapping = (
 	'-t' => {
 		'name' => 'type',
 		'desc' => "[c]reature, [a]rtifact, [s]orcery, [i]nstant, \n" .
-				"\t\t[e]nchantment, [p]laneswalker, [l]and," .
+				"\t\t[e]nchantment, [p]laneswalker, [l]and, \n" .
 				"\t\tle[g]end",
 		'split' => '',
 		'join' => '|',
 		'expand' => {
-			'c' => '"Creatrue"',
+			'c' => '"Creature"',
 			'a' => '"Artifact"',
 			's' => '"Sorcery"',
 			'i' => '"Instant"',
