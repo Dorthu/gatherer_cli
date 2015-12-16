@@ -4,9 +4,13 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use URI;
+use Term::ANSIColor;
+use Web::Scraper; # TODO
+my $text_only_option = 1;
 
 #some setup
-my %mapping = ( 
+my %mapping = (
 	'-n' => {
 		'name'=> 'name',
 		'desc'=> 'text contained in the name',
@@ -88,22 +92,36 @@ my %mapping = (
 	}
 );
 
+my @args = grep { $_ !~ /^-te[xt]{0,2}$/ } @ARGV;
+my $text_only = scalar @ARGV ne scalar @args;
+
 my ($command) = grep { `which $_`  } ('sensible-browser', 'open');
-unsupported() and exit(1) unless $command;
+unsupported() and exit(1) unless $command or $text_only;
 
 #begin
 help() and exit(0) unless @ARGV;
 
-my %params = @ARGV;
+#TODO - remove this line
+print "Text only" if $text_only;
 
+die "You need the Web::Scraper module installed to use text-only mode"
+	if $text_only and not $text_only_option;
+
+# make sure everything's paired
+die "Something doesn't look right" if scalar @args % 2;
+
+# parse parameters
+my %params = @args;
 die "Invalid arguments" if grep { $_ !~ /^-/ } keys %params;
 
 my $base_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=advanced';
 
 $base_url .= make_url_param($_, $params{$_}) foreach keys %params;
 
-system $command, $base_url;
+system $command, $base_url unless $text_only;
 print "$base_url\n";
+show_text($base_url) if $text_only;
+exit(0);
 
 #functions and stuff
 sub make_url_param
@@ -132,11 +150,52 @@ sub make_url_param
 	return $ret;
 }
 
+sub show_text
+{
+	my $url = shift;
+	my $res = scrape_results($url);
+
+	open LESS, '|less -cSRM' or die "couldn't find les!";
+	foreach(@{$res->{cards}}) {
+		print LESS color 'bold';
+		print LESS "$_->{name}\t";
+		print LESS color 'reset';
+		foreach(@{$_->{mana}}) {
+			print LESS "{$1}" if $_ =~ /([1-9A-Z]+)/;
+		}
+		print LESS "\n";
+		print LESS "$_->{type}\n\n";
+		foreach(@{$_->{rules}}) {
+			print LESS "* $_\n" if $_ =~ /\w/;
+		}
+		print LESS "\n\n";
+	}
+	close LESS;
+}
+
+sub scrape_results
+{
+	my $target_url = shift;
+	my $scraper = scraper {
+		process "table.cardItemTable > tr > td > table", 'cards[]' => scraper {
+			process "tr > td.middleCol > div.cardInfo > span.cardTitle", 'name' => [ 'TEXT', sub { s/^\s+// } ];
+			process "tr > td.middleCol > div.cardInfo > span.manaCost > img", 'mana[]' => '@alt';
+			process "tr > td.middleCol > div.cardInfo > span.convertedManaCost", 'cmc' => 'TEXT';
+			process "tr > td.middleCol > div.cardInfo > span.typeLine", 'type' => [ 'TEXT', sub { s/^\s+// }, sub { s/[^[:ascii:]]+//g }];
+			process "tr > td.middleCol > div.cardInfo > div.rulesText > p", 'rules[]' => 'TEXT';
+		};
+	};
+
+	my $out = $scraper->scrape(URI->new($target_url));
+	return $out;
+}
+
 sub help
 {
 	print "gatherer - command line interface to the online mtg card db\n\n";
 	print "use:\n\tgatherer -n 'llanowar elves'\n\n";
 	print "options:\n";
+	print "\t-text:\tshow output in cosole, text-only\n";
 	print "\t$_\t$mapping{$_}->{'desc'}\n" foreach keys %mapping;
 	print "\n";
 	print "modifiers:\n";
