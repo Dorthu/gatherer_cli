@@ -6,8 +6,7 @@ use warnings;
 use Data::Dumper;
 use URI;
 use Term::ANSIColor;
-use Web::Scraper; # TODO
-my $text_only_option = 1;
+use Web::Scraper;
 
 #some setup
 my %mapping = (
@@ -92,23 +91,17 @@ my %mapping = (
 	}
 );
 
-my @args = grep { $_ !~ /^-te[xt]{0,2}$/ } @ARGV;
-my $text_only = scalar @ARGV ne scalar @args;
+my @args = grep { $_ !~ /^-b$/ } @ARGV;
+my $browser = scalar @ARGV ne scalar @args;
 
 my ($command) = grep { `which $_`  } ('sensible-browser', 'open');
-unsupported() and exit(1) unless $command or $text_only;
+unsupported() and exit(1) if not $command and $browser;
 
 #begin
 help() and exit(0) unless @ARGV;
 
-#TODO - remove this line
-print "Text only" if $text_only;
-
-die "You need the Web::Scraper module installed to use text-only mode"
-	if $text_only and not $text_only_option;
-
 # make sure everything's paired
-die "Something doesn't look right" if scalar @args % 2;
+die "Invalid arguments (everything except -b must be paired)" if scalar @args % 2;
 
 # parse parameters
 my %params = @args;
@@ -118,9 +111,9 @@ my $base_url = 'http://gatherer.wizards.com/Pages/Search/Default.aspx?action=adv
 
 $base_url .= make_url_param($_, $params{$_}) foreach keys %params;
 
-system $command, $base_url unless $text_only;
+system $command, $base_url if $browser;
 print "$base_url\n";
-show_text($base_url) if $text_only;
+show_text($base_url) unless $browser;
 exit(0);
 
 #functions and stuff
@@ -161,8 +154,9 @@ sub show_text
 		print LESS "$_->{name}\t";
 		print LESS color 'reset';
 		foreach(@{$_->{mana}}) {
-			print LESS "{$1}" if $_ =~ /([1-9A-Z]+)/;
-		}
+            s/Blu/U/; s| or |/|; s|[a-z -]+||g;
+			print LESS "{$1}" if m|([1-9A-Z/]+)|;
+        }
 		print LESS "\n";
 		print LESS "$_->{type}\n\n";
 		foreach(@{$_->{rules}}) {
@@ -195,7 +189,7 @@ sub help
 	print "gatherer - command line interface to the online mtg card db\n\n";
 	print "use:\n\tgatherer -n 'llanowar elves'\n\n";
 	print "options:\n";
-	print "\t-text:\tshow output in cosole, text-only\n";
+	print "\t-b:\tshow output in new browser tab\n";
 	print "\t$_\t$mapping{$_}->{'desc'}\n" foreach keys %mapping;
 	print "\n";
 	print "modifiers:\n";

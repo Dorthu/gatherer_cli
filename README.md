@@ -7,6 +7,9 @@ command line interface to the online mtg database
 `gatherer -c '!GBW' -r scry -t '!l'` - find all red, blue, or colorless non-land
 	cards that scry
 
+`gatherer -c R -cmc '<3' -pow '>4' -b` - find all red cards that cost 2 or less
+    and have a power of more than 4
+
 ## parameters
 
 give each parameter 0-1 times.
