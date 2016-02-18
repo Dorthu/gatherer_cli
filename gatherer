@@ -88,7 +88,13 @@ my %mapping = (
 		'desc' => '[r]are, [u]ncommon, [c]ommon, [m]ythic rare',
 		'split' => '',
 		'join' => '|'
-	}
+	},
+    '-s' => {
+        'name' => 'set',
+        'desc' => 'set abbreviation',
+        'split' => ' ',
+        'join' => '|'
+    }
 );
 
 my @args = grep { $_ !~ /^-b$/ } @ARGV;
