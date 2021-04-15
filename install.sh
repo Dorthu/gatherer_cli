@@ -16,7 +16,7 @@ if ! which cpan; then
     exit 2
 fi
 
-if ! cpan Web::Scraper; then
+if ! cpan Web::Scraper Mozilla::CA; then
     echo 'could not install dependant module, Web::Scraper through cpan!'
     exit 3
 fi
